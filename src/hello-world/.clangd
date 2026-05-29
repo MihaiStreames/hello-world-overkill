@@ -1,0 +1,7 @@
+CompileFlags:
+  Add:
+    - --target=x86_64-pc-windows-msvc
+    - -isystem/home/sincos/.xwin/crt/include
+    - -isystem/home/sincos/.xwin/sdk/include/ucrt
+    - -isystem/home/sincos/.xwin/sdk/include/um
+    - -isystem/home/sincos/.xwin/sdk/include/shared

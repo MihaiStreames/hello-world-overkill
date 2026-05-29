@@ -1,0 +1,9 @@
+### Misc ###
+*.exe
+*.o
+
+### Local ###
+debug/
+
+### LLMs ###
+.claude/
