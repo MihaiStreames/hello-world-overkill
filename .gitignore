@@ -1,0 +1,11 @@
+### Misc ###
+*.exe
+*.obj
+*.o
+*.map
+
+### Local ###
+log/
+
+### LLMs ###
+.claude/
