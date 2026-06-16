@@ -3,9 +3,9 @@
 #include "utils.h"
 
 #define NTWRITEFILE_HASH 0x8accec2d0bb46d81ULL
-#define NTDLL_HASH 0x4fd1cd7bbe06fcfcULL
-#define UP -32
-#define DOWN 32
+#define NTDLL_HASH       0x4fd1cd7bbe06fcfcULL
+#define UP               -32
+#define DOWN             32
 
 #ifdef _WIN64
     #define ReadTeb() ((PTEB)__readgsqword(0x30))
@@ -18,8 +18,8 @@ static PVOID GetNtdllBase(void) {
     PTEB pTeb = ReadTeb();
     PPEB pPeb = pTeb->ProcessEnvironmentBlock;
 
-    PPEB_LDR_DATA pLdr = pPeb->Ldr;
-    LIST_ENTRY* pHead = &pLdr->InMemoryOrderModuleList;
+    PPEB_LDR_DATA pLdr  = pPeb->Ldr;
+    LIST_ENTRY*   pHead = &pLdr->InMemoryOrderModuleList;
 
     for (LIST_ENTRY* pEntry = pHead->Flink; pEntry != pHead; pEntry = pEntry->Flink) {
         PLDR_DATA_TABLE_ENTRY pLdrEntry =
@@ -34,14 +34,14 @@ static PVOID GetNtdllBase(void) {
 
 static BYTE* FindStub(BYTE* pbBase) {
     PIMAGE_DOS_HEADER pDos = (PIMAGE_DOS_HEADER)pbBase;
-    PIMAGE_NT_HEADERS pNt = (PIMAGE_NT_HEADERS)(pbBase + pDos->e_lfanew);
+    PIMAGE_NT_HEADERS pNt  = (PIMAGE_NT_HEADERS)(pbBase + pDos->e_lfanew);
 
     DWORD dwExpRva = pNt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
     PIMAGE_EXPORT_DIRECTORY pExp = (PIMAGE_EXPORT_DIRECTORY)(pbBase + dwExpRva);
 
     PDWORD pdwNames = (PDWORD)(pbBase + pExp->AddressOfNames);
     PDWORD pdwFuncs = (PDWORD)(pbBase + pExp->AddressOfFunctions);
-    PWORD pwOrds = (PWORD)(pbBase + pExp->AddressOfNameOrdinals);
+    PWORD  pwOrds   = (PWORD)(pbBase + pExp->AddressOfNameOrdinals);
 
     for (DWORD dwIdx = 0; dwIdx < pExp->NumberOfNames; dwIdx++) {
         if (djb2((PBYTE)(pbBase + pdwNames[dwIdx])) == NTWRITEFILE_HASH) {
@@ -53,8 +53,8 @@ static BYTE* FindStub(BYTE* pbBase) {
 }
 
 static BYTE* ScanGadget(BYTE* pbBase) {
-    PIMAGE_DOS_HEADER pDos = (PIMAGE_DOS_HEADER)pbBase;
-    PIMAGE_NT_HEADERS pNt = (PIMAGE_NT_HEADERS)(pbBase + pDos->e_lfanew);
+    PIMAGE_DOS_HEADER     pDos = (PIMAGE_DOS_HEADER)pbBase;
+    PIMAGE_NT_HEADERS     pNt  = (PIMAGE_NT_HEADERS)(pbBase + pDos->e_lfanew);
     PIMAGE_SECTION_HEADER pSec = IMAGE_FIRST_SECTION(pNt);
 
     for (WORD wIdx = 0; wIdx < pNt->FileHeader.NumberOfSections; wIdx++, pSec++) {
@@ -64,7 +64,7 @@ static BYTE* ScanGadget(BYTE* pbBase) {
         }
 
         BYTE* pbStart = pbBase + pSec->VirtualAddress;
-        BYTE* pbEnd = pbStart + pSec->Misc.VirtualSize - 2;
+        BYTE* pbEnd   = pbStart + pSec->Misc.VirtualSize - 2;
         for (BYTE* pb = pbStart; pb < pbEnd; pb++) {
             if (pb[0] == 0x0F && pb[1] == 0x05 && pb[2] == 0xC3) {
                 return pb;
@@ -83,7 +83,7 @@ static BOOL NeighborSSN(BYTE* pbStub, WORD wIdx, int iDir, DWORD* pdwSSN) {
     }
 
     DWORD dwSSN = (DWORD)(pbNeighbor[5] << 8) | pbNeighbor[4];
-    *pdwSSN = iDir > 0 ? dwSSN - wIdx : dwSSN + wIdx;
+    *pdwSSN     = iDir > 0 ? dwSSN - wIdx : dwSSN + wIdx;
 
     return TRUE;
 }
@@ -105,7 +105,7 @@ BOOL ResolveNtWriteFile(DWORD* pdwSSN, PVOID* ppvGadget) {
     // 4C 8B D1 B8 <SSN> (mov r10, rcx; mov eax, ssn)
 
     if (pbStub[0] == 0x4C && pbStub[1] == 0x8B && pbStub[2] == 0xD1 && pbStub[3] == 0xB8) {
-        *pdwSSN = *(DWORD*)(pbStub + 4);
+        *pdwSSN    = *(DWORD*)(pbStub + 4);
         *ppvGadget = ScanGadget(pbBase);
         return *ppvGadget != NULL;
     }

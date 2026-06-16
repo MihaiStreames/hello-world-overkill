@@ -5,9 +5,9 @@
 AccessModifierOffset: -2
 
 AlignAfterOpenBracket: BlockIndent
-AlignConsecutiveMacros: false
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: Consecutive
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: Consecutive
 AlignEscapedNewlines: Right
 AlignOperands: false
 AlignTrailingComments: false
@@ -84,7 +84,6 @@ SpaceAfterLogicalNot: false
 
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeCtorInitializerColon: true
-SpaceBeforeInheritanceColon: false
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: true
 SpacesBeforeTrailingComments: 1

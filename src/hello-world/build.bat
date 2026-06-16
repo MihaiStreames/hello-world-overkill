@@ -12,7 +12,7 @@ if "%ARCH%"=="x86" (
 set BUILD_DIR=build
 set TARGET=%BUILD_DIR%\hello.exe
 set CFLAGS=/Os /GS-
-set LDFLAGS=/subsystem:console /nodefaultlib /entry:main kernel32.lib
+set LDFLAGS=/subsystem:console /nodefaultlib /entry:main /merge:.rdata=.text /merge:.pdata=.text /merge:.xdata=.text kernel32.lib
 
 if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
 mkdir %BUILD_DIR%

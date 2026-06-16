@@ -1,17 +1,14 @@
 #include "ntwritefile.h"
 #include "types.h"
 
-extern DWORD dwSSN;
-extern PVOID pvGadget;
-
-DWORD dwSSN = 0;
+DWORD dwSSN    = 0;
 PVOID pvGadget = NULL;
 
 int main(void) {
-    const char szMsg[] = "Hello world!\n";
+    const char      szMsg[]       = "Hello world!\n";
     IO_STATUS_BLOCK ioStatusBlock = {0};
-    NtWriteFile_t pfnWriteFile = (NtWriteFile_t)(void*)NtWriteFileStub;
-    NTSTATUS lStatus;
+    NtWriteFile_t   pfnWriteFile  = (NtWriteFile_t)(void*)NtWriteFileStub;
+    NTSTATUS        lStatus;
 
     if (!ResolveNtWriteFile(&dwSSN, &pvGadget)) {
         return 1;
