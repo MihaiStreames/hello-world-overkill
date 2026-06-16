@@ -2,6 +2,9 @@
 
 #include <windows.h>
 
+#define NTDLL_HASH       0x4fd1cd7bbe06fcfcULL
+#define NTWRITEFILE_HASH 0x8accec2d0bb46d81ULL
+
 // http://www.cse.yorku.ca/~oz/hash.html
 static DWORD64 djb2(PBYTE pbStr) {
     DWORD64 dwHash = 0x7734773477347734;

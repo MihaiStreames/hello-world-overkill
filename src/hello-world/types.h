@@ -34,13 +34,26 @@ typedef struct {
 } PEB_LDR_DATA, *PPEB_LDR_DATA;
 
 typedef struct {
-    BOOLEAN       InheritedAddressSpace;
-    BOOLEAN       ReadImageFileExecOptions;
-    BOOLEAN       BeingDebugged;
-    BOOLEAN       BitField;
-    HANDLE        Mutant;
-    PVOID         ImageBaseAddress;
-    PPEB_LDR_DATA Ldr;
+    ULONG  MaximumLength;
+    ULONG  Length;
+    ULONG  Flags;
+    ULONG  DebugFlags;
+    HANDLE ConsoleHandle;
+    ULONG  ConsoleFlags;
+    HANDLE StandardInput;
+    HANDLE StandardOutput;
+    HANDLE StandardError;
+} RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
+
+typedef struct {
+    BOOLEAN                      InheritedAddressSpace;
+    BOOLEAN                      ReadImageFileExecOptions;
+    BOOLEAN                      BeingDebugged;
+    BOOLEAN                      BitField;
+    HANDLE                       Mutant;
+    PVOID                        ImageBaseAddress;
+    PPEB_LDR_DATA                Ldr;
+    PRTL_USER_PROCESS_PARAMETERS ProcessParameters;
 } PEB, *PPEB;
 
 typedef struct {

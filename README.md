@@ -1,6 +1,6 @@
 # hello-world-overkill
 
-Windows hello world that bypasses `libc` and the Win32 API (except `GetStdHandle`) to reach the NT kernel directly.
+Windows hello world that bypasses `libc` and the Win32 API entirely to reach the NT kernel directly.
 
 [![License](https://img.shields.io/github/license/MihaiStreames/hello-world-overkill?label=license)](LICENSE)
 
@@ -11,27 +11,27 @@ Full write-up & details: [blog/hello-world-overkill](https://mihaistreames.githu
 
 ## Build
 
-Requires MSVC tools (`cl`, `link`, `ml`/`ml64`). Install using [Build Tools with Visual C++](https://visualstudio.microsoft.com/visual-cpp-build-tools) ([tutorial](https://github.com/bycloudai/InstallVSBuildToolsWindows)), or headless:
+Requires [LLVM](https://llvm.org/builds) (`clang-cl`, `lld-link`, `llvm-ml64`). Install headless:
 
 ```pwsh
-winget install Microsoft.VisualStudio.2022.BuildTools --override "--quiet --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows11SDK.22621 --includeRecommended"
+winget install LLVM.LLVM
 ```
 
-```bat
+```pwsh
 cd src\hello-world
-build.bat
+.\build.ps1
 
-:: build for x86 (default is x64)
-set ARCH=x86 & build.bat
+# build for x86 (default is x64)
+.\build.ps1 -Arch x86
 
-build\hello.exe
+.\build\hello.exe
 ```
 
 ## Credits
 
 Windows syscall techniques:
 
-- **Hell's Gate**: [@smelly__vx](https://twitter.com/smelly__vx) & [@am0nsec](https://github.com/am0nsec) -- [repo](https://github.com/am0nsec/HellsGate)
+- **Hell's Gate**: [@smelly\_\_vx](https://twitter.com/smelly__vx) & [@am0nsec](https://github.com/am0nsec) -- [repo](https://github.com/am0nsec/HellsGate)
 - **Halo's Gate**: Reenz0h ([@SEKTOR7net](https://twitter.com/SEKTOR7net)) -- [write-up](https://blog.sektor7.net/#!res/2021/halosgate.md)
 - **Tartarus' Gate**: [@trickster0](https://github.com/trickster0) -- [repo](https://github.com/trickster0/TartarusGate)
 

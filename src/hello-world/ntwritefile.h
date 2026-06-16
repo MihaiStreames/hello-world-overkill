@@ -16,4 +16,4 @@ typedef NTSTATUS (*NtWriteFile_t)(
     PULONG           Key
 );
 
-BOOL ResolveNtWriteFile(DWORD* pdwSSN, PVOID* ppvGadget);
+BOOL ResolveNtWriteFile(PVOID pvNtdllBase, DWORD* pdwSSN, PVOID* ppvGadget);

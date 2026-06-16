@@ -1,4 +1,5 @@
 #include "ntwritefile.h"
+#include "peb.h"
 #include "types.h"
 
 DWORD dwSSN    = 0;
@@ -10,14 +11,12 @@ int main(void) {
     NtWriteFile_t   pfnWriteFile  = (NtWriteFile_t)(void*)NtWriteFileStub;
     NTSTATUS        lStatus;
 
-    if (!ResolveNtWriteFile(&dwSSN, &pvGadget)) {
+    if (!ResolveNtWriteFile(GetNtdllBase(), &dwSSN, &pvGadget)) {
         return 1;
     }
 
-    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
     lStatus = pfnWriteFile(
-        hStdout,
+        GetStdoutHandle(),
         NULL,
         NULL,
         NULL,

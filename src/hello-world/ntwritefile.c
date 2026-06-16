@@ -1,36 +1,8 @@
 #include "ntwritefile.h"
-#include "types.h"
 #include "utils.h"
 
-#define NTWRITEFILE_HASH 0x8accec2d0bb46d81ULL
-#define NTDLL_HASH       0x4fd1cd7bbe06fcfcULL
-#define UP               -32
-#define DOWN             32
-
-#ifdef _WIN64
-    #define ReadTeb() ((PTEB)__readgsqword(0x30))
-#else // x86
-    #define ReadTeb() ((PTEB)__readfsdword(0x18))
-#endif // _WIN64
-
-static PVOID GetNtdllBase(void) {
-    // more thorough, even if marginal improvement
-    PTEB pTeb = ReadTeb();
-    PPEB pPeb = pTeb->ProcessEnvironmentBlock;
-
-    PPEB_LDR_DATA pLdr  = pPeb->Ldr;
-    LIST_ENTRY*   pHead = &pLdr->InMemoryOrderModuleList;
-
-    for (LIST_ENTRY* pEntry = pHead->Flink; pEntry != pHead; pEntry = pEntry->Flink) {
-        PLDR_DATA_TABLE_ENTRY pLdrEntry =
-            CONTAINING_RECORD(pEntry, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
-        if (djb2w(pLdrEntry->BaseDllName.Buffer) == NTDLL_HASH) {
-            return pLdrEntry->DllBase;
-        }
-    }
-
-    return NULL;
-}
+#define UP   -32
+#define DOWN 32
 
 static BYTE* FindStub(BYTE* pbBase) {
     PIMAGE_DOS_HEADER pDos = (PIMAGE_DOS_HEADER)pbBase;
@@ -88,8 +60,8 @@ static BOOL NeighborSSN(BYTE* pbStub, WORD wIdx, int iDir, DWORD* pdwSSN) {
     return TRUE;
 }
 
-BOOL ResolveNtWriteFile(DWORD* pdwSSN, PVOID* ppvGadget) {
-    BYTE* pbBase = GetNtdllBase();
+BOOL ResolveNtWriteFile(PVOID pvNtdllBase, DWORD* pdwSSN, PVOID* ppvGadget) {
+    BYTE* pbBase = (BYTE*)pvNtdllBase;
     if (!pbBase) {
         return FALSE;
     }
