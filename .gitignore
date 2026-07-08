@@ -3,6 +3,7 @@
 *.o
 
 ### Local ###
+build/
 debug/
 
 ### LLMs ###
